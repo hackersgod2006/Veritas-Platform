@@ -4,19 +4,22 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  PORT = "3000"
-  BASE_PATH = "/"
+  PORT          = "3000"
+  BASE_PATH     = "/"
+  # VITE_API_URL — set this in Netlify dashboard after deploying the Render backend
+  # Example: https://veritas-api.onrender.com
+  VITE_API_URL  = ""
 
-# Return 404 for API routes so frontend auth doesn't treat the HTML
-# error page as a valid JSON user response
+# Block SPA fallback for /api/* routes so a missing backend returns 404,
+# not the index HTML (which would confuse auth into thinking the user is logged out)
 [[redirects]]
-  from = "/api/*"
-  to = "/index.html"
+  from   = "/api/*"
+  to     = "/index.html"
   status = 404
-  force = true
+  force  = true
 
 # SPA fallback — must come AFTER the /api/* rule
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
