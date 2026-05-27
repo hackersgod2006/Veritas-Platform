@@ -6,6 +6,28 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+// Configure allowed origins from ALLOWED_ORIGINS env var (comma-separated list)
+// Falls back to permissive mode if not set — lock down in production
+const allowedOriginsEnv = process.env.ALLOWED_ORIGINS;
+const allowedOrigins = allowedOriginsEnv
+  ? allowedOriginsEnv.split(",").map((o) => o.trim()).filter(Boolean)
+  : null;
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (curl, Postman, server-to-server)
+      if (!origin) return callback(null, true);
+      // Permissive mode when no list is configured
+      if (!allowedOrigins) return callback(null, true);
+      // Check against the configured list
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not in allowed list`));
+    },
+    credentials: true,
+  }),
+);
+
 app.use(
   pinoHttp({
     logger,
@@ -25,7 +47,6 @@ app.use(
     },
   }),
 );
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
