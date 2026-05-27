@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useGetMe, useLogout, useLogin, useRegister } from "@workspace/api-client-react";
 import type { User, LoginInput, RegisterInput, AuthResponse } from "@workspace/api-client-react";
 import { getGetMeQueryKey } from "@workspace/api-client-react";
@@ -20,9 +20,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
 
+  // Only call the API when a session token exists — avoids treating
+  // Netlify's HTML 404/redirect responses as valid user JSON.
+  const [hasToken] = useState(() => !!localStorage.getItem("token"));
+
   const { data: user, isLoading } = useGetMe({
     query: {
-      enabled: true,
+      enabled: hasToken,
       queryKey: getGetMeQueryKey(),
       retry: false,
     },
@@ -60,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading,
+        isLoading: hasToken ? isLoading : false,
         login,
         register,
         logout,

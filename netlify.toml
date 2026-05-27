@@ -7,7 +7,15 @@
   PORT = "3000"
   BASE_PATH = "/"
 
-# Serve the SPA for all routes
+# Return 404 for API routes so frontend auth doesn't treat the HTML
+# error page as a valid JSON user response
+[[redirects]]
+  from = "/api/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+# SPA fallback — must come AFTER the /api/* rule
 [[redirects]]
   from = "/*"
   to = "/index.html"
