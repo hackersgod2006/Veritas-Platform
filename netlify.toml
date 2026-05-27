@@ -1,0 +1,14 @@
+[build]
+  command = "pnpm --filter @workspace/veritas run build"
+  publish = "artifacts/veritas/dist/public"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PORT = "3000"
+  BASE_PATH = "/"
+
+# Serve the SPA for all routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
