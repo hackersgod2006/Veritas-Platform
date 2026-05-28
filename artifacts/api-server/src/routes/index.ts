@@ -7,6 +7,7 @@ import applicationsRouter from "./applications";
 import messagesRouter from "./messages";
 import waitlistRouter from "./waitlist";
 import adminRouter from "./admin";
+import debugRouter from "./debug";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(applicationsRouter);
 router.use(messagesRouter);
 router.use(waitlistRouter);
 router.use(adminRouter);
+router.use(debugRouter);
 
 export default router;
