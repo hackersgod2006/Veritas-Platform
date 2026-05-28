@@ -10,7 +10,18 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Supabase (and most managed Postgres providers) require SSL.
+// rejectUnauthorized: false is needed because managed providers use
+// certificates that may not be in Node's default CA bundle.
+const sslConfig = process.env.NODE_ENV === "production"
+  ? { rejectUnauthorized: false }
+  : false;
+
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: sslConfig,
+});
+
 export const db = drizzle(pool, { schema });
 
 export * from "./schema";
