@@ -1,12 +1,11 @@
 # Render.com deployment configuration for the Veritas API backend
-# Deploy at: https://dashboard.render.com → New Web Service → Connect this repo
 services:
   - type: web
     name: veritas-api
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npx --yes pnpm@9 install --frozen-lockfile && npx pnpm@9 --filter @workspace/api-server run build
+    buildCommand: npx --yes pnpm@9 install --no-frozen-lockfile && npx pnpm@9 --filter @workspace/api-server run build
     startCommand: npx pnpm@9 --filter @workspace/api-server run start
     healthCheckPath: /api/healthz
     envVars:
@@ -15,20 +14,20 @@ services:
       - key: PORT
         value: "10000"
       - key: DATABASE_URL
-        sync: false          # Set manually in Render dashboard
+        sync: false
       - key: SESSION_SECRET
-        generateValue: true  # Render auto-generates a secure random value
+        generateValue: true
       - key: ALLOWED_ORIGINS
-        sync: false          # Set to your Netlify URL, e.g. https://veritas-platform.netlify.app
+        sync: false
       - key: SMTP_HOST
-        sync: false          # Optional: e.g. smtp.gmail.com
+        sync: false
       - key: SMTP_PORT
-        sync: false          # Optional: e.g. 587
+        sync: false
       - key: SMTP_USER
-        sync: false          # Optional: your SMTP username / email
+        sync: false
       - key: SMTP_PASS
-        sync: false          # Optional: your SMTP password / app password
+        sync: false
       - key: ADMIN_EMAIL
-        sync: false          # Optional: email address for admin notifications
+        sync: false
       - key: PLATFORM_URL
-        sync: false          # Optional: your Netlify URL for email links
+        sync: false
