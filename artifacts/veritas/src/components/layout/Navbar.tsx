@@ -44,15 +44,18 @@ export function Navbar() {
           <span className="font-bold text-lg tracking-tight text-[#1E3A5F]">VERITAS</span>
         </Link>
 
-        {isHome && (
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#verification" className="hover:text-primary transition-colors">Verification</a>
-            <a href="#trust-score" className="hover:text-primary transition-colors">Trust Score</a>
-            <a href="#clients" className="hover:text-primary transition-colors">For Clients</a>
-            <a href="#professionals" className="hover:text-primary transition-colors">For Professionals</a>
-          </div>
-        )}
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          {isHome && (
+            <>
+              <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
+              <a href="#verification" className="hover:text-primary transition-colors">Verification</a>
+              <a href="#trust-score" className="hover:text-primary transition-colors">Trust Score</a>
+            </>
+          )}
+          <Link href="/talent" className="hover:text-primary transition-colors font-semibold text-primary/80">
+            Talent Directory
+          </Link>
+        </div>
 
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
@@ -72,6 +75,11 @@ export function Navbar() {
             </>
           ) : (
             <>
+              <Link href="/talent" className="hidden sm:block">
+                <Button variant="ghost" className="text-primary/70 font-medium hover:text-primary hover:bg-primary/5 text-sm">
+                  Browse Talent
+                </Button>
+              </Link>
               <Link href="/auth">
                 <Button variant="ghost" className="text-primary font-medium hover:bg-primary/5">
                   Sign In
