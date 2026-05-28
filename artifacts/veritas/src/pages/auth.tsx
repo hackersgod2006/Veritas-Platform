@@ -6,9 +6,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Briefcase, Building } from "lucide-react";
+import { Shield, Briefcase, Building, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,10 @@ export default function AuthPage() {
   const params = new URLSearchParams(searchString);
   const defaultTab = params.get("tab") || "login";
   const queryClient = useQueryClient();
-  
+
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+
   const setRoleMutation = useSetRole();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -67,7 +70,6 @@ export default function AuthPage() {
   const handleSetRole = (role: RoleInputRole) => {
     setRoleMutation.mutate({ data: { role } }, {
       onSuccess: (response) => {
-        // Backend returns { token, user } — save the fresh token with the new role encoded
         const r = response as any;
         if (r.token) {
           localStorage.setItem("token", r.token);
@@ -91,7 +93,6 @@ export default function AuthPage() {
             <h1 className="text-3xl font-bold text-primary">Select Your Role</h1>
             <p className="text-muted-foreground mt-2">How will you use Veritas Infrastructure?</p>
           </div>
-          
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="cursor-pointer hover:border-primary transition-colors border-2" onClick={() => handleSetRole(RoleInputRole.professional)}>
               <CardHeader>
@@ -100,7 +101,6 @@ export default function AuthPage() {
                 <CardDescription>Apply for a Trust Passport and access enterprise opportunities.</CardDescription>
               </CardHeader>
             </Card>
-            
             <Card className="cursor-pointer hover:border-primary transition-colors border-2" onClick={() => handleSetRole(RoleInputRole.client)}>
               <CardHeader>
                 <Building className="w-8 h-8 text-primary mb-2" />
@@ -133,7 +133,7 @@ export default function AuthPage() {
               <TabsTrigger value="login">Sign In</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="login">
               <Form {...loginForm}>
                 <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
@@ -154,7 +154,19 @@ export default function AuthPage() {
                     render={({ field }) => (
                       <FormItem>
                         <Label>Password</Label>
-                        <FormControl><Input {...field} type="password" /></FormControl>
+                        <div className="relative">
+                          <FormControl>
+                            <Input {...field} type={showLoginPassword ? "text" : "password"} className="pr-10" />
+                          </FormControl>
+                          <button
+                            type="button"
+                            onClick={() => setShowLoginPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -163,7 +175,7 @@ export default function AuthPage() {
                 </form>
               </Form>
             </TabsContent>
-            
+
             <TabsContent value="register">
               <Form {...registerForm}>
                 <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
@@ -195,7 +207,19 @@ export default function AuthPage() {
                     render={({ field }) => (
                       <FormItem>
                         <Label>Password</Label>
-                        <FormControl><Input {...field} type="password" /></FormControl>
+                        <div className="relative">
+                          <FormControl>
+                            <Input {...field} type={showRegisterPassword ? "text" : "password"} className="pr-10" />
+                          </FormControl>
+                          <button
+                            type="button"
+                            onClick={() => setShowRegisterPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showRegisterPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
