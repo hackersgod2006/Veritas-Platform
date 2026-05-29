@@ -27,7 +27,7 @@ const registerSchema = z.object({
   password: z.string().min(6),
 });
 
-const apiBase = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+const apiBase = "https://veritas-api-production-a354.up.railway.app";
 
 async function apiFetch(path: string, body: object) {
   const res = await fetch(`${apiBase}${path}`, {

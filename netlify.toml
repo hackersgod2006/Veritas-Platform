@@ -1,22 +1,17 @@
 [build]
-  command = "pnpm --filter @workspace/veritas run build"
-  publish = "artifacts/veritas/dist/public"
+base = "artifacts/veritas"
+command = "pnpm --filter @workspace/veritas run build"
+publish = "artifacts/veritas/dist/public"
 
 [build.environment]
-  NODE_VERSION = "20"
-  PORT          = "3000"
-  BASE_PATH     = "/"
-  VITE_API_URL  = "https://veritas-platform.onrender.com"
+NODE_VERSION = "20"
+VITE_API_URL = "https://veritas-api-production-a354.up.railway.app"
+VITE_SUPABASE_URL = "https://uuupyvzmcjpsfadhvdkf.supabase.co"
+NODE_ENV = "production"
+PORT = "3000"
+BASE_PATH = "/"
 
-# Block SPA fallback for /api/* routes
 [[redirects]]
-  from   = "/api/*"
-  to     = "/index.html"
-  status = 404
-  force  = true
-
-# SPA fallback
-[[redirects]]
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200

@@ -15,12 +15,17 @@ const resetTokens = new Map<string, { userId: number; email: string; name: strin
 // POST /api/auth/register
 router.post("/auth/register", async (req, res) => {
   try {
-    const parsed = RegisterBody.safeParse(req.body);
+    const body = req.body as any;
+    // Accept both `name` and `fullName` as the display name field
+    const resolvedName = body.fullName || body.name;
+    const parsed = RegisterBody.safeParse({ ...body, name: resolvedName });
     if (!parsed.success) {
-      res.status(400).json({ error: "Invalid input" });
+      res.status(400).json({ error: "Invalid input", detail: parsed.error.flatten() });
       return;
     }
     const { email, password, name } = parsed.data;
+    // Accept optional role at registration time
+    const requestedRole: string | undefined = body.role;
 
     const existing = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
     if (existing.length > 0) {
@@ -34,6 +39,7 @@ router.post("/auth/register", async (req, res) => {
       name,
       passwordHash,
       isAdmin: false,
+      ...(requestedRole === "professional" || requestedRole === "client" ? { role: requestedRole } : {}),
     }).returning();
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role, isAdmin: user.isAdmin });
@@ -62,12 +68,12 @@ router.post("/auth/login", async (req, res) => {
   try {
     const parsed = LoginBody.safeParse(req.body);
     if (!parsed.success) {
-      res.status(400).json({ error: "Invalid input" });
+      res.status(400).json({ error: "Invalid input", detail: parsed.error.flatten() });
       return;
     }
     const { email, password } = parsed.data;
 
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase().trim())).limit(1);
     if (!user || !user.passwordHash) {
       res.status(401).json({ error: "Invalid email or password" });
       return;

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const apiBase = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+const apiBase = "https://veritas-api-production-a354.up.railway.app";
 
 const TIER_COLORS: Record<string, string> = {
   "Tier 1": "bg-amber-100 text-amber-800 border-amber-200",
